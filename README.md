@@ -9,6 +9,17 @@
   <a href="http://www.yisongyue.com" target="_blank">Yisong&nbsp;Yue</a> &emsp; &emsp;
 </p>
 
+## About
+
+This repository contains code to compute the information content of an infinitely wide neural network. What is this *information content*, exactly? Well, it's the negative log probability of the orthant in function space that is consistent with the training labels, where probability is calculated with respect to the Gaussian measure on function space that is induced by the neural architecture.
+
+For a training set with binary class labels, there are three steps to compute it:
+1. For all pairs of training inputs `x_i` and `x_j`, compute the correlations between network outputs under random sampling of the network weights: `Sigma_ij := Expect_w [ f(x_i,w) f(x_j,w) ]`.
+2. For random vector `z` distributed Normally with mean `0` and covariance `Sigma`, estimate the probability `p := Prob[sign z = c]` where `c` is the binary vector of class labels.
+3. Return `log 1/p`.
+
+And why is this interesting? Well, PAC-Bayes guarantees generalisation when the information content `log 1/p` is smaller than the number of training data points. More details are given in [our paper](https://arxiv.org/abs/2103.01045).
+
 ## Getting started
 - Run the unit tests:
 ```bash
