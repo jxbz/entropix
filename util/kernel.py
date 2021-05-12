@@ -26,7 +26,7 @@ def complexity(sigma, c, samples):
     inv_trace = inv.diag().sum()
     inv_proj = torch.dot(c, torch.mv(inv, c))
 
-    formula_1 = nth_root_det * ( (0.5 - 1/math.pi)*inv_trace + inv_proj/math.pi )
+    formula_1 = n/5.0 + nth_root_det * ( (0.5 - 1/math.pi)*inv_trace + inv_proj/math.pi )
 
     mat = nth_root_det*inv - id
 

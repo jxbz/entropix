@@ -24,7 +24,7 @@ init_lr = 0.01
 decay = 0.9
 
 ### Estimator hyperparameters
-num_samples = 10000
+num_samples = 10**6
 cuda = True
 delta = 0.01
 
@@ -55,6 +55,9 @@ for params in param_product:
                                                 init_lr=init_lr, 
                                                 decay=decay )
 
+    print(f"Train acc: {train_acc[-1]}")
+    print(f"Test acc: {test_acc}")
+
     ### Kernel arithmetic
     data, target = list(full_batch_train_loader)[0]
     if cuda: data, target = data.cuda(), target.cuda()
@@ -79,10 +82,8 @@ for params in param_product:
     estimator_2 = invert_bound( (c0_2 + delta_term) / (n-1) )
     estimator_3 = invert_bound( (c0_3 + delta_term) / (n-1) )
 
-    bound = invert_bound( (n/5.0 + c1 + delta_term) / (n-1) )
+    bound = invert_bound( (c1 + delta_term) / (n-1) )
 
-    print(f"Train acc: {train_acc[-1]}")
-    print(f"Test acc: {test_acc}")
     print(f"Estimator 1: {estimator_1}")
     print(f"Estimator 2: {estimator_2}")
     print(f"Estimator 3: {estimator_3}")
