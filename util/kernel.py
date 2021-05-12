@@ -29,16 +29,12 @@ def complexity(sigma, c, samples):
     formula_1 = nth_root_det * ( (0.5 - 1/math.pi)*inv_trace + inv_proj/math.pi )
 
     mat = nth_root_det*inv - id
-    contribs = []
-    for _ in range(samples):
-        z = torch.randn(n, device=device).abs()
-        contrib = -0.5 * torch.dot(c*z, torch.mv(mat, c*z))
-        contribs.append(contrib.item())
-    contribs = np.array(contribs)
-    max = np.max(contribs)
-    contribs = contribs - max
 
-    formula_0 = n*math.log(2) + math.log(samples) - max - math.log(np.sum(np.exp(contribs)))
+    z = torch.randn((n,samples), device=device).abs()
+    cz = torch.mul(c.unsqueeze(1), z)
+    contribs = -0.5*(cz * torch.matmul(mat, cz)).sum(dim=0)
+
+    formula_0 = n*math.log(2) + math.log(samples) - torch.logsumexp(contribs, dim=0)
 
     return formula_0.item(), formula_1.item()
 
