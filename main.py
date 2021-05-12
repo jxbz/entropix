@@ -21,7 +21,6 @@ batch_size = 50
 
 ### Training hyperparameters
 init_lr = 0.01
-epochs = 20
 decay = 0.9
 
 ### Estimator hyperparameters
@@ -42,17 +41,17 @@ for params in param_product:
     np.random.seed(seed)
 
     ### Get data
-    full_batch_train_loader, train_loader, test_loader = get_data(  num_train_examples=num_train_examples,
-                                                                    batch_size=batch_size, 
-                                                                    random_labels=random_labels, 
-                                                                    binary_digits=binary_digits )
+    full_batch_train_loader, _, train_loader, test_loader = get_data( num_train_examples=num_train_examples,
+                                                                      num_test_examples=None,
+                                                                      batch_size=batch_size,
+                                                                      random_labels=random_labels,
+                                                                      binary_digits=binary_digits )
 
     ### Train network
     train_acc, test_acc, model = train_network( train_loader = train_loader,
                                                 test_loader = test_loader,
                                                 depth=depth,
                                                 width=width,
-                                                epochs=epochs, 
                                                 init_lr=init_lr, 
                                                 decay=decay )
 

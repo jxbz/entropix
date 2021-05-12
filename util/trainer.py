@@ -28,21 +28,18 @@ class SimpleNet(nn.Module):
         return self.final(x)
 
 
-def train_network(train_loader, test_loader, depth, width, epochs, init_lr, decay):
+def train_network(train_loader, test_loader, depth, width, init_lr, decay):
     
     model = SimpleNet(depth, width).cuda()
     optim = Nero(model.parameters(), lr=init_lr)      
     lr_lambda = lambda x: decay**x
     lr_scheduler = torch.optim.lr_scheduler.LambdaLR(optim, lr_lambda)
 
-    model.train()
-    
     train_acc_list = []
+    train_acc = 0
 
-    for epoch in range(epochs):
-
-        correct = 0
-        total = 0
+    while train_acc < 1.0:
+        model.train()
 
         for data, target in tqdm(train_loader):
             data, target = (data.cuda(), target.cuda())
@@ -51,15 +48,26 @@ def train_network(train_loader, test_loader, depth, width, epochs, init_lr, deca
             y_pred = model(data).squeeze()
             loss = (y_pred - target).norm()
 
-            correct += (target.float() == y_pred.sign()).sum().item()
-            total += target.shape[0]
-
             model.zero_grad()
             loss.backward()
             optim.step()
 
         lr_scheduler.step()
-        train_acc_list.append(correct/total)
+
+        model.eval()
+        correct = 0
+        total = 0
+
+        for data, target in tqdm(train_loader):
+            data, target = (data.cuda(), target.cuda())
+            data, target = normalize_data(data, target)
+
+            y_pred = model(data).squeeze()
+            correct += (target.float() == y_pred.sign()).sum().item()
+            total += target.shape[0]
+
+        train_acc = correct/total
+        train_acc_list.append(train_acc)
 
     model.eval()
     correct = 0
