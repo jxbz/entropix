@@ -25,7 +25,7 @@ print()
 n = 100
 sigma = torch.eye(n)
 c = torch.randn(n).sign()
-print( complexity(sigma, c, 10000) ) # should be n*ln(2), n/2
+print( complexity(sigma, c, 10000) ) # should be n*ln(2), 7n/10
 print()
 
 ## Check kernel complexity via non-cholesky approach
@@ -33,6 +33,7 @@ print()
 n = 10
 rand = torch.randn(n, n)
 sigma = torch.mm(rand, rand.t()) + torch.eye(n)
+sigma = 0.5*(sigma + sigma.t())
 assert ( sigma == sigma.t() ).all()
 
 c = torch.randn(n).sign()
@@ -41,13 +42,14 @@ det = torch.det(sigma)
 inv = torch.inverse(sigma)
 tr = torch.trace(inv)
 
-comp_1 = det ** (1/n) * ( (0.5-1/math.pi)*tr + 1/math.pi*torch.dot(c, torch.matmul(inv, c)) )
+comp_1 = n/5.0 + det ** (1/n) * ( (0.5-1/math.pi)*tr + 1/math.pi*torch.dot(c, torch.matmul(inv, c)) )
 comp_1 = comp_1.item()
 
-num_samples = 100000
+num_samples = 10**6
 ide = torch.eye(n)
 estimate = 0
-for _ in range(num_samples):
+print("running non-parallelised estimation")
+for _ in tqdm(range(num_samples)):
 	z = torch.randn(n).abs()
 	estimate += math.exp( -0.5 * torch.dot(c*z, torch.matmul(det**(1/n)*inv - ide,c*z)) )
 estimate /= num_samples
@@ -66,12 +68,13 @@ print()
 depth = 3
 width = 5000
 num_train_examples = 5
-num_networks = 1000
+num_networks = 10**3
 
-_, train_loader, _ = get_data(  num_train_examples=num_train_examples,
-                                batch_size=num_train_examples,
-	                            random_labels=False,
-	                            binary_digits=False )
+_, _, train_loader, _ = get_data( num_train_examples=num_train_examples,
+								  num_test_examples=None,
+                                  batch_size=num_train_examples,
+	                              random_labels=False,
+	                              binary_digits=False )
 
 for data, target in train_loader:
     data, target = normalize_data(data, target)
