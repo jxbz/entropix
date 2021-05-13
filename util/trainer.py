@@ -38,7 +38,7 @@ def train_network(train_loader, test_loader, depth, width, init_lr, decay):
     train_acc_list = []
     train_acc = 0
 
-    while train_acc < 1.0:
+    for epoch in range(100):
         model.train()
 
         for data, target in tqdm(train_loader):
@@ -68,6 +68,8 @@ def train_network(train_loader, test_loader, depth, width, init_lr, decay):
 
         train_acc = correct/total
         train_acc_list.append(train_acc)
+
+        if train_acc == 1.0: break
 
     model.eval()
     correct = 0
