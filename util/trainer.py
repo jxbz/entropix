@@ -28,7 +28,7 @@ class SimpleNet(nn.Module):
         return self.final(x)
 
 
-def train_network(train_loader, test_loader, depth, width, init_lr, decay):
+def train_network(train_loader, test_loader, depth, width, init_lr, decay, break_on_fit=True):
     
     model = SimpleNet(depth, width).cuda()
     optim = Nero(model.parameters(), lr=init_lr)      
@@ -38,10 +38,10 @@ def train_network(train_loader, test_loader, depth, width, init_lr, decay):
     train_acc_list = []
     train_acc = 0
 
-    for epoch in range(100):
+    for epoch in tqdm(range(100)):
         model.train()
 
-        for data, target in tqdm(train_loader):
+        for data, target in train_loader:
             data, target = (data.cuda(), target.cuda())
             data, target = normalize_data(data, target)
 
@@ -58,7 +58,7 @@ def train_network(train_loader, test_loader, depth, width, init_lr, decay):
         correct = 0
         total = 0
 
-        for data, target in tqdm(train_loader):
+        for data, target in train_loader:
             data, target = (data.cuda(), target.cuda())
             data, target = normalize_data(data, target)
 
@@ -69,13 +69,13 @@ def train_network(train_loader, test_loader, depth, width, init_lr, decay):
         train_acc = correct/total
         train_acc_list.append(train_acc)
 
-        if train_acc == 1.0: break
+        if break_on_fit and train_acc == 1.0: break
 
     model.eval()
     correct = 0
     total = 0
 
-    for data, target in tqdm(test_loader):
+    for data, target in test_loader:
         data, target = (data.cuda(), target.cuda())
         data, target = normalize_data(data, target)
         
