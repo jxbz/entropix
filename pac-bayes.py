@@ -90,5 +90,5 @@ for params in param_product:
     print(f"Bound: {bound}")
 
     results = (train_acc, test_acc, estimator_1, estimator_2, estimator_3, bound)
-    fname = 'logs/' + str(params) + '.pickle'
+    fname = 'logs/pac-bayes/' + str(params) + '.pickle'
     pickle.dump( results, open( fname, "wb" ) )
