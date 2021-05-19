@@ -53,7 +53,8 @@ for params in param_product:
                                                 depth=depth,
                                                 width=width,
                                                 init_lr=init_lr, 
-                                                decay=decay )
+                                                decay=decay,
+                                                break_on_fit=False )
 
     print(f"Train acc: {train_acc[-1]}")
     print(f"Test acc: {test_acc}")
