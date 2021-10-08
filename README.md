@@ -27,7 +27,7 @@ python unit_test.py
 ```
 - Run the main script:
 ```bash
-python main.py
+python pac-bayes.py
 ```
 - Generate the plots using the Jupyter notebook `make_plots.ipynb`.
 
@@ -37,16 +37,18 @@ The code was run on:
 - Using docker container nvcr.io/nvidia/pytorch:20.03-py3
 - On an NVIDIA Titan RTX GPU, with driver version 440.82, CUDA Version: 10.2
 
+For the exact version of the code used in arXiv:2103.01045, go back to commit 49cc144.
+
 ## Citation
 
 If you find this code useful, feel free to cite [the paper](https://arxiv.org/abs/2103.01045):
 
 ```bibtex
-@misc{entropix,
+@inproceedings{entropix,
   title={Computing the Information Content of Trained Neural Networks},
   author={Jeremy Bernstein and Yisong Yue},
-  year={2021},
-  eprint={arXiv:2103.01045}
+  booktitle={Workshop on the Theory of Overparameterized Machine Learning},
+  year={2021}
 }
 ```
 
